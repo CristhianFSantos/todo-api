@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  dev-db:
+    image: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 123456789Qq!
+      POSTGRES_DB: todo
+    ports:
+      - "5432:5432"
