@@ -1,0 +1,24 @@
+✅ npm i -D @nrwl/schematics@7.6.2
+✅ npm i -D @nestjs/schematics
+
+✅ npm i @prisma/client
+✅ npm i -g prisma
+    ⚡prisma init
+    ⚡prisma migrate dev --name 'Initial Migrate'
+    ⚡prisma migrate dev
+    ⚡prisma migrate deploy
+    ⚡prisma studio
+
+🐋 docker-compose up
+
+🛠️ nest new "project-name"
+🛠️ nest g mo "module-name" --flat
+🛠️ nest g co "controller-name" --flat --no-spec
+🛠️ nest g s "service-name" --flat --no-spec
+
+✅ npm i argon2
+
+✅ npm i --save @nestjs/swagger swagger-ui-express
+
+✅ npm i class-validator
+✅ npm i class-transformer
