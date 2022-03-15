@@ -17,7 +17,7 @@ import {
 import { AuthService } from './auth.service';
 import { SignInRequestDTO } from './dtos/sign-in-dto';
 import { SignUpRequestDTO } from './dtos/sign-up-dto';
-import { UpdateRequestDTO } from './dtos/update.dto';
+import { UpdateUserRequestDTO } from './dtos/update.dto';
 import { IAuthResponse } from './models/auth.response';
 
 @ApiTags('Auth')
@@ -84,11 +84,11 @@ export class AuthController {
   })
   async updateUserByID(
     @Query('userID') userID: number,
-    @Body() updateRequestDTO: UpdateRequestDTO,
+    @Body() updateUserRequestDTO: UpdateUserRequestDTO,
   ): Promise<IAuthResponse> {
     const userIdUpdated = await this.authService.updateUserByID(
       userID,
-      updateRequestDTO,
+      updateUserRequestDTO,
     );
     const response: IAuthResponse = {
       userID: userIdUpdated,

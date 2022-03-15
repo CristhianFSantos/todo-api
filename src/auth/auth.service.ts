@@ -6,7 +6,7 @@ import { eAuthMessage } from 'src/shared/messages.enum';
 import { PrismaService } from './../prisma/prisma.service';
 import { SignInRequestDTO } from './dtos/sign-in-dto';
 import { SignUpRequestDTO } from './dtos/sign-up-dto';
-import { UpdateRequestDTO } from './dtos/update.dto';
+import { UpdateUserRequestDTO } from './dtos/update.dto';
 
 @Injectable()
 export class AuthService {
@@ -65,17 +65,17 @@ export class AuthService {
   }
   /***********************************************************************************************************************/
   async deleteUserByID(userID: number): Promise<number> {
-    const user = await this.prismaService.user.findUnique({
-      where: { userID: parseInt(userID.toString()) },
-    });
-
-    if (!user)
-      throw new HttpException(
-        eAuthMessage.USER_NOT_FOUND,
-        HttpStatus.NOT_FOUND,
-      );
-
     try {
+      const user = await this.prismaService.user.findUnique({
+        where: { userID: parseInt(userID.toString()) },
+      });
+
+      if (!user)
+        throw new HttpException(
+          eAuthMessage.USER_NOT_FOUND,
+          HttpStatus.NOT_FOUND,
+        );
+
       await this.prismaService.user.delete({
         where: { userID: parseInt(userID.toString()) },
       });
@@ -89,24 +89,27 @@ export class AuthService {
     }
   }
   /***********************************************************************************************************************/
-  async updateUserByID(userID: number, updateRequestDTO: UpdateRequestDTO) {
-    const user = await this.prismaService.user.findUnique({
-      where: { userID: parseInt(userID.toString()) },
-    });
-
-    if (!user)
-      throw new HttpException(
-        eAuthMessage.USER_NOT_FOUND,
-        HttpStatus.NOT_FOUND,
-      );
-
+  async updateUserByID(
+    userID: number,
+    updateUserRequestDTO: UpdateUserRequestDTO,
+  ) {
     try {
+      const user = await this.prismaService.user.findUnique({
+        where: { userID: parseInt(userID.toString()) },
+      });
+
+      if (!user)
+        throw new HttpException(
+          eAuthMessage.USER_NOT_FOUND,
+          HttpStatus.NOT_FOUND,
+        );
+
       await this.prismaService.user.update({
         where: { userID: parseInt(userID.toString()) },
         data: {
-          name: updateRequestDTO.name,
-          email: updateRequestDTO.email,
-          admin: updateRequestDTO.admin,
+          name: updateUserRequestDTO.name,
+          email: updateUserRequestDTO.email,
+          admin: updateUserRequestDTO.admin,
         },
       });
       return user.userID;
