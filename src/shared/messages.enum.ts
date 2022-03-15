@@ -16,3 +16,20 @@ export const enum eAuthControllerDescription {
   UPDATE_USER_BY_ID = 'Method to update a user by id',
   GET_ALL_USERS = 'Method to get all users',
 }
+
+export const enum eTodoMessage {
+  TODO_NOT_FOUND = 'Todo not found',
+  TODO_CREATED = 'Todo created successfully',
+  TODO_UPDATED = 'Todo updated successfully',
+  TODO_DELETED = 'Todo deleted successfully',
+  TODO_LIST_EMPTY = 'Todo list is empty',
+  REQUEST_ERROR = 'Error in request',
+}
+
+export const enum eTodoControllerDescription {
+  GET_TODOS_BY_ID_USERS = 'Method to get all todos by id user',
+  POST_TODO = 'Method to create a new todo',
+  DELETE_TODO_BY_ID = 'Method to delete a todo by id',
+  UPDATE_TODO_BY_ID = 'Method to update a todo by id',
+  GET_TODO_BY_TITLE = 'Method to get a todo by title',
+}
