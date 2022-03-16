@@ -30,3 +30,10 @@
 
 ✅ npm i -D @types/passport-jwt
 ✅ npm i -D @types/jwt
+
+☁️ install cli heroku
+☁️ open terminal in project path 
+☁️ heroku login
+☁️ heroku config:set NPM_CONFIG_PRODUCTION=false
+☁️ heroku config:set NODE_ENV=production
+☁️ git push heroku master
