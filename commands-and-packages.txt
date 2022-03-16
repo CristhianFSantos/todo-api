@@ -34,12 +34,17 @@
 ☁️ install cli heroku
 ☁️ open terminal in project path 
 ☁️ heroku login
+☁️ heroku git:remote -a todo-nest-postgres-api
 ☁️ heroku config:set NPM_CONFIG_PRODUCTION=false
 ☁️ heroku config:set NODE_ENV=production
 ☁️ git push heroku master
+☁️ heroku pg:info --app todo-nest-postgres-api
 
 
 ⚡✅ Deploy
 "prestart:prod": "rimraf dist && npm run build",
 "postinstall": "npx prisma generate && npm run build",
 "prebuild": "rimraf dist",
+
+
+heroku pg:info --app todo-nest-postgres-api
