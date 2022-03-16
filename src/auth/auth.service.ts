@@ -1,16 +1,20 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
 import { eAuthMessage } from 'src/shared/messages.enum';
 import { PrismaService } from './../prisma/prisma.service';
-import { SignInRequestDTO } from './dtos/sign-in-dto';
+import { SignInRequestDTO, SignInResponseDTO } from './dtos/sign-in-dto';
 import { SignUpRequestDTO } from './dtos/sign-up-dto';
 import { UpdateUserRequestDTO } from './dtos/update.dto';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   //MÉTODO USA A BIBLIOTECA ARGON2 PARA CRIPTOGRAFAR A SENHA E CADASTRA O USUÁRIO NO BANCO DE DADOS COM UM HASH NA SENHA
   /***********************************************************************************************************************/
@@ -39,7 +43,7 @@ export class AuthService {
   }
   // MÉTODO PARA VERIFICAR SE O USUÁRIO E A SENHA ESTÃO CORRETOS, É USADO A BIBLIOTECA ARGON2 PARA VERIFICAR A SENHA E RETORNA O TOKEN DO USUÁRIO
   /***********************************************************************************************************************/
-  async signIn(signInRequestDTO: SignInRequestDTO): Promise<string> {
+  async signIn(signInRequestDTO: SignInRequestDTO) {
     const user = await this.prismaService.user.findUnique({
       where: { email: signInRequestDTO.email },
     });
@@ -61,7 +65,16 @@ export class AuthService {
         HttpStatus.UNAUTHORIZED,
       );
 
-    return 'token';
+    const access_token = await this.signToken({
+      userID: user.userID,
+      name: user.name,
+      email: user.email,
+    });
+
+    return {
+      userID: user.userID,
+      access_token,
+    };
   }
   /***********************************************************************************************************************/
   async deleteUserByID(userID: number): Promise<number> {
@@ -133,5 +146,12 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+  }
+  /***********************************************************************************************************************/
+  private signToken(signInResponseDTO: SignInResponseDTO) {
+    return this.jwtService.sign(signInResponseDTO, {
+      expiresIn: '1d',
+      secret: process.env.JWT_SECRET,
+    });
   }
 }

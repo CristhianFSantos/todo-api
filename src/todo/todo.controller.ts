@@ -7,12 +7,20 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
+import { BEARER_AUTH_NAME } from 'src/shared/const';
 import {
   eTodoControllerDescription,
   eTodoMessage,
 } from 'src/shared/messages.enum';
+import { JwtGuard } from './../auth/guards/jwt.guard';
 import { CreateTodoRequestDTO } from './dtos/create-todo.dto';
 import { UpdateTodoRequestDTO } from './dtos/update-todo.dto';
 import { ITodoResponse } from './models/todo.response';
@@ -20,6 +28,8 @@ import { TodoService } from './todo.service';
 
 @ApiTags('Todo')
 @Controller('todo')
+@ApiBearerAuth(BEARER_AUTH_NAME)
+@UseGuards(JwtGuard)
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
   /***********************************************************************************************************************/

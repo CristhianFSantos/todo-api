@@ -1,15 +1,5 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpStatus,
-  Post,
-  Put,
-  Query,
-} from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { User } from '@prisma/client';
+import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   eAuthControllerDescription,
   eAuthMessage,
@@ -17,7 +7,6 @@ import {
 import { AuthService } from './auth.service';
 import { SignInRequestDTO } from './dtos/sign-in-dto';
 import { SignUpRequestDTO } from './dtos/sign-up-dto';
-import { UpdateUserRequestDTO } from './dtos/update.dto';
 import { IAuthResponse } from './models/auth.response';
 
 @ApiTags('Auth')
@@ -50,59 +39,15 @@ export class AuthController {
   async signIn(
     @Body() signInRequestDTO: SignInRequestDTO,
   ): Promise<IAuthResponse> {
-    const token = await this.authService.signIn(signInRequestDTO);
+    const userAuth = await this.authService.signIn(signInRequestDTO);
 
     const response: IAuthResponse = {
-      token: token,
+      token: userAuth.access_token,
+      userID: userAuth.userID,
       massage: eAuthMessage.SIGN_IN_SUCCESS,
       HttpStatus: HttpStatus.OK,
     };
     return response;
   }
   /***********************************************************************************************************************/
-
-  @Delete('delete-user-by-id')
-  @ApiQuery({ name: 'userID', required: true })
-  @ApiOperation({
-    summary: eAuthControllerDescription.DELETE_USER_BY_ID,
-  })
-  async deleteUser(@Query('userID') userID: number): Promise<IAuthResponse> {
-    const userIdDeleted = await this.authService.deleteUserByID(userID);
-
-    const response: IAuthResponse = {
-      userID: userIdDeleted,
-      massage: eAuthMessage.DELETE_USER_SUCCESS,
-      HttpStatus: HttpStatus.OK,
-    };
-    return response;
-  }
-  /***********************************************************************************************************************/
-  @Put('update-user-by-id')
-  @ApiQuery({ name: 'userID', required: true })
-  @ApiOperation({
-    summary: eAuthControllerDescription.UPDATE_USER_BY_ID,
-  })
-  async updateUserByID(
-    @Query('userID') userID: number,
-    @Body() updateUserRequestDTO: UpdateUserRequestDTO,
-  ): Promise<IAuthResponse> {
-    const userIdUpdated = await this.authService.updateUserByID(
-      userID,
-      updateUserRequestDTO,
-    );
-    const response: IAuthResponse = {
-      userID: userIdUpdated,
-      massage: eAuthMessage.USER_UPDATE_SUCCESS,
-      HttpStatus: HttpStatus.OK,
-    };
-    return response;
-  }
-  /***********************************************************************************************************************/
-  @Get('get-all-users')
-  @ApiOperation({
-    summary: eAuthControllerDescription.GET_ALL_USERS,
-  })
-  async getAllUsers(): Promise<User[]> {
-    return await this.authService.getAllUsers();
-  }
 }

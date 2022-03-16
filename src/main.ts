@@ -2,6 +2,7 @@ import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { BEARER_AUTH_NAME } from './shared/const';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,6 +15,17 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'JWT Authorization header using the Bearer scheme.',
+        name: 'Authorization',
+      },
+      BEARER_AUTH_NAME,
+    )
+
     .setTitle('Todo API')
     .setDescription('The NestJS API description')
     .setVersion('1.0')

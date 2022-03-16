@@ -19,3 +19,9 @@ export class SignInRequestDTO {
   })
   password: string;
 }
+
+export class SignInResponseDTO {
+  userID: number;
+  email: string;
+  name: string;
+}
