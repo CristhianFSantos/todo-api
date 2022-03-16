@@ -22,3 +22,11 @@
 
 ✅ npm i class-validator
 ✅ npm i class-transformer
+
+✅ npm i --save @nestjs/passport passport
+✅ npm i @nestjs/jwt
+✅ npm i passport-jwt
+
+
+✅ npm i -D @types/passport-jwt
+✅ npm i -D @types/jwt
