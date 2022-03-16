@@ -1,7 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import * as argon from 'argon2';
 import { eAuthMessage } from 'src/shared/messages.enum';
 import { PrismaService } from './../prisma/prisma.service';
@@ -33,12 +32,10 @@ export class AuthService {
 
       return user.userID;
     } catch (error) {
-      if (error instanceof PrismaClientKnownRequestError) {
-        throw new HttpException(
-          eAuthMessage.EMAIL_ALREADY_EXISTS,
-          HttpStatus.BAD_REQUEST,
-        );
-      }
+      throw new HttpException(
+        `${eAuthMessage.EMAIL_ALREADY_EXISTS} or ${error}`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
   // MÉTODO PARA VERIFICAR SE O USUÁRIO E A SENHA ESTÃO CORRETOS, É USADO A BIBLIOTECA ARGON2 PARA VERIFICAR A SENHA E RETORNA O TOKEN DO USUÁRIO
