@@ -41,10 +41,7 @@
 ☁️ heroku pg:info --app todo-nest-postgres-api
 
 
-⚡✅ Deploy
+⚡✅ Deploy scripst
 "prestart:prod": "rimraf dist && npm run build",
 "postinstall": "npx prisma generate && npm run build",
-"prebuild": "rimraf dist",
-
-
-heroku pg:info --app todo-nest-postgres-api
+"prebuild": "rimraf dist && npx prisma migrate deploy",
