@@ -4,11 +4,10 @@ import { PrismaModule } from './../prisma/prisma.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { UserController } from './user.controller';
 
 @Module({
   imports: [PrismaModule, JwtModule.register({})],
   providers: [AuthService, JwtStrategy],
-  controllers: [AuthController, UserController],
+  controllers: [AuthController],
 })
 export class AuthModule {}

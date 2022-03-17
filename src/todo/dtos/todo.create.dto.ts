@@ -1,35 +1,35 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class UpdateTodoRequestDTO {
+export class TodoCreateRequestDTO {
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
-    description: "The todo's title",
-    default: 'Learn Angular',
+    description: "Todo's title",
+    default: 'Learn NestJS',
   })
   title: string;
 
   @IsNotEmpty()
-  @IsString()
-  @ApiProperty({
-    description: "The todo's description",
-    default: 'Learn Angular with NestJS',
-  })
-  description: string;
-
-  @IsNotEmpty()
   @IsBoolean()
   @ApiProperty({
-    description: "The todo's completed status",
-    default: false,
+    description: "Todo's completed",
+    default: true,
   })
   completed: boolean;
 
   @IsNotEmpty()
   @IsString()
   @ApiProperty({
-    description: "The todo's createdAt",
+    description: "Todo's description",
+    default: 'Create application with NestJS, Prisma, Postgres and Docker',
+  })
+  description: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty({
+    description: "Todo's createdAt",
     default: '2020-06-01T00:00:00',
   })
   createdAt: string;
@@ -38,7 +38,7 @@ export class UpdateTodoRequestDTO {
   @IsNumber()
   @ApiProperty({
     description: "User's id",
-    default: 2,
+    default: 1,
   })
   userID: number;
 }

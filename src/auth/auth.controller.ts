@@ -5,9 +5,9 @@ import {
   eAuthMessage,
 } from 'src/shared/messages.enum';
 import { AuthService } from './auth.service';
+import { TodoResponseDTO } from './dtos/auth.response.dto';
 import { SignInRequestDTO } from './dtos/sign-in-dto';
 import { SignUpRequestDTO } from './dtos/sign-up-dto';
-import { IAuthResponse } from './models/auth.response';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -21,14 +21,14 @@ export class AuthController {
   })
   async signUp(
     @Body() singUpRequestDTO: SignUpRequestDTO,
-  ): Promise<IAuthResponse> {
+  ): Promise<TodoResponseDTO> {
     const userID = await this.authService.signUp(singUpRequestDTO);
 
-    const response: IAuthResponse = {
-      userID: userID,
-      massage: eAuthMessage.SIGN_UP_SUCCESS,
-      HttpStatus: HttpStatus.CREATED,
-    };
+    const response = new TodoResponseDTO();
+    response.userID = userID;
+    response.userName = singUpRequestDTO.name;
+    response.message = eAuthMessage.SIGN_UP_SUCCESS;
+    response.httpStatus = HttpStatus.OK;
     return response;
   }
   /***********************************************************************************************************************/
@@ -38,16 +38,15 @@ export class AuthController {
   })
   async signIn(
     @Body() signInRequestDTO: SignInRequestDTO,
-  ): Promise<IAuthResponse> {
+  ): Promise<TodoResponseDTO> {
     const userAuth = await this.authService.signIn(signInRequestDTO);
 
-    const response: IAuthResponse = {
-      token: userAuth.access_token,
-      userID: userAuth.userID,
-      massage: eAuthMessage.SIGN_IN_SUCCESS,
-      HttpStatus: HttpStatus.OK,
-    };
+    const response = new TodoResponseDTO();
+    response.userID = userAuth.userID;
+    response.userName = userAuth.userName;
+    response.message = eAuthMessage.SIGN_IN_SUCCESS;
+    response.httpStatus = HttpStatus.OK;
+    response.token = userAuth.access_token;
     return response;
   }
-  /***********************************************************************************************************************/
 }

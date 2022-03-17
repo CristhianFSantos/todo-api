@@ -2,8 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Todo } from '@prisma/client';
 import { eTodoMessage } from 'src/shared/messages.enum';
 import { PrismaService } from './../prisma/prisma.service';
-import { CreateTodoRequestDTO } from './dtos/create-todo.dto';
-import { UpdateTodoRequestDTO } from './dtos/update-todo.dto';
+import { TodoCreateRequestDTO } from './dtos/todo.create.dto';
+import { TodoUpdateRequestDTO } from './dtos/todo.update.dto';
 
 @Injectable()
 export class TodoService {
@@ -24,7 +24,28 @@ export class TodoService {
     }
   }
   /***********************************************************************************************************************/
-  async postTodo(createTodoRequestDTO: CreateTodoRequestDTO): Promise<number> {
+  async getTodosByTitle(title: string, userID: number): Promise<Todo[]> {
+    try {
+      const todos = await this.prismaService.todo.findMany({
+        where: {
+          userID: parseInt(userID.toString()),
+          title: {
+            contains: title,
+            mode: 'insensitive',
+          },
+        },
+      });
+
+      return todos;
+    } catch (error) {
+      throw new HttpException(
+        eTodoMessage.REQUEST_ERROR + error,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+  /***********************************************************************************************************************/
+  async postTodo(createTodoRequestDTO: TodoCreateRequestDTO): Promise<number> {
     try {
       const todo = await this.prismaService.todo.create({
         data: {
@@ -76,7 +97,7 @@ export class TodoService {
   /***********************************************************************************************************************/
   async updateTodo(
     todoID: number,
-    updateRequestDTO: UpdateTodoRequestDTO,
+    updateRequestDTO: TodoUpdateRequestDTO,
   ): Promise<number> {
     try {
       const todo = await this.prismaService.todo.findUnique({
@@ -105,27 +126,6 @@ export class TodoService {
       });
 
       return todo.todoID;
-    } catch (error) {
-      throw new HttpException(
-        eTodoMessage.REQUEST_ERROR + error,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
-  /***********************************************************************************************************************/
-  async getTodosByTitle(title: string, userID: number): Promise<Todo[]> {
-    try {
-      const todos = await this.prismaService.todo.findMany({
-        where: {
-          userID: parseInt(userID.toString()),
-          title: {
-            contains: title,
-            mode: 'insensitive',
-          },
-        },
-      });
-
-      return todos;
     } catch (error) {
       throw new HttpException(
         eTodoMessage.REQUEST_ERROR + error,
