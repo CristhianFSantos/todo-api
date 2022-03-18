@@ -15,6 +15,8 @@ CREATE TABLE "User" (
     "userID" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
+    "admin" BOOLEAN NOT NULL,
+    "recoveryCode" INTEGER DEFAULT 0,
     "password" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("userID")

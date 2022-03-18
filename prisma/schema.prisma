@@ -21,10 +21,11 @@ model Todo {
 }
 
 model User {
-  userID   Int     @id @default(autoincrement())
-  name     String
-  email    String  @unique
-  admin    Boolean
-  password String
-  todo     Todo[]
+  userID       Int     @id @default(autoincrement())
+  name         String
+  email        String  @unique
+  admin        Boolean
+  recoveryCode Int?    @default(0)
+  password     String
+  todo         Todo[]
 }

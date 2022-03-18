@@ -41,3 +41,8 @@ export const enum eAuthControllerDescription {
   SIGN_IN = 'Method to authenticate a user',
 }
 /************************************************************************************************************************/
+export const enum eRecoverPasswordMessage {
+  EMAIL_SENT_SUCCESS = 'Email sent successfully',
+  INCORRECT_CODE = 'Incorrect code',
+  RECOVER_SUCCESS = 'Recover password success',
+}
