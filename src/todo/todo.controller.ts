@@ -15,11 +15,12 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { BEARER_AUTH_NAME } from 'src/shared/constants';
+
 import {
   eTodoControllerDescription,
   eTodoMessage,
 } from 'src/shared/messages.enum';
+import { BEARER_AUTH_NAME } from 'src/swagger.config';
 import { JwtGuard } from './../auth/guards/jwt.guard';
 import { TodoCreateRequestDTO } from './dtos/todo.create.dto';
 import { TodoResponseDTO } from './dtos/todo.response.dto';

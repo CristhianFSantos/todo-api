@@ -16,11 +16,12 @@ import {
 } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
-import { BEARER_AUTH_NAME } from 'src/shared/constants';
+
 import {
   eUserControllerDescription,
   eUserMessage,
 } from 'src/shared/messages.enum';
+import { BEARER_AUTH_NAME } from 'src/swagger.config';
 import { UserResponseRequestDTO } from './dtos/user.response.dto';
 import { UserUpdateRequestDTO } from './dtos/user.update.dto';
 import { UserService } from './user.service';
