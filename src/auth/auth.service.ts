@@ -4,10 +4,10 @@ import * as argon from 'argon2';
 import { randomUUID } from 'node:crypto';
 import { MESSAGES_EN } from 'src/messages/messages-en';
 import { PrismaService } from './../prisma/prisma.service';
-import { SignInRequestDTO } from './dto/sign-in-request-dto';
-import { SignInResponseDTO } from './dto/sign-in-response-dto';
-import { SignUpRequestDTO } from './dto/sign-up-request-dto';
-import { SignUpResponseDTO } from './dto/sign-up-response-dto';
+import { SignInRequestDTO } from './dto/sign-in.request.dto';
+import { SignInResponseDTO } from './dto/sign-in.response.dto';
+import { SignUpRequestDTO } from './dto/sign-up.request.dto';
+import { SignUpResponseDTO } from './dto/sign-up.response-d.to';
 
 @Injectable()
 export class AuthService {

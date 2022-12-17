@@ -22,8 +22,8 @@ import {
   eUserMessage,
 } from 'src/shared/messages.enum';
 import { BEARER_AUTH_NAME } from 'src/swagger/swagger.config';
-import { UserResponseRequestDTO } from './dtos/user.response.dto';
-import { UserUpdateRequestDTO } from './dtos/user.update.dto';
+import { UserResponseRequestDTO } from './dto/user.response.dto';
+import { UserUpdateRequestDTO } from './dto/user.update.dto';
 import { UserService } from './user.service';
 
 @ApiTags('User')

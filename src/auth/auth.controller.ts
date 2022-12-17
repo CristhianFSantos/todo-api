@@ -2,10 +2,10 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { MESSAGES_EN } from 'src/messages/messages-en';
 import { AuthService } from './auth.service';
-import { SignInRequestDTO } from './dto/sign-in-request-dto';
-import { SignInResponseDTO } from './dto/sign-in-response-dto';
-import { SignUpRequestDTO } from './dto/sign-up-request-dto';
-import { SignUpResponseDTO } from './dto/sign-up-response-dto';
+import { SignInRequestDTO } from './dto/sign-in.request.dto';
+import { SignInResponseDTO } from './dto/sign-in.response.dto';
+import { SignUpRequestDTO } from './dto/sign-up.request.dto';
+import { SignUpResponseDTO } from './dto/sign-up.response-d.to';
 
 @ApiTags('Auth')
 @Controller('auth')
