@@ -1,6 +1,11 @@
-import { HttpStatus } from '@nestjs/common';
-export class UserResponseRequestDTO {
+export class UserResponseDTO {
   userID: string;
-  message: string;
-  httpStatus: HttpStatus;
+  name: string;
+  email: string;
+
+  constructor(partial: Partial<UserResponseDTO>) {
+    this.userID = partial.userID;
+    this.name = partial.name;
+    this.email = partial.email;
+  }
 }

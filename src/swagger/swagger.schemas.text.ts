@@ -23,4 +23,14 @@ export const SCHEMAS_TEXT = {
       default: '5p&0Jo@p1',
     },
   },
+  user_request_update: {
+    name: {
+      description: "User's name",
+      default: 'Bill Gates',
+    },
+    email: {
+      description: "User's email",
+      default: 'bill@outlook.com',
+    },
+  },
 };

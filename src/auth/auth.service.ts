@@ -70,12 +70,12 @@ export class AuthService {
       email: user.email,
     });
 
-    signInResponse.token = this.buildToken(signInResponse);
-
     const sevenDaysInMilliseconds = 604800000;
     signInResponse.tokenExpiration = new Date(
       Date.now() + sevenDaysInMilliseconds,
     );
+
+    signInResponse.token = this.buildToken(signInResponse);
 
     return signInResponse;
   }

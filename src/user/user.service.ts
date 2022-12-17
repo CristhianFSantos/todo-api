@@ -1,80 +1,83 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { MESSAGES_EN } from 'src/messages/messages-en';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { eUserMessage } from 'src/shared/messages.enum';
-import { UserUpdateRequestDTO } from './dtos/user.update.dto';
+import { UserRequestUpdateDTO } from './dto/user.request.update.dto';
+import { UserResponseDTO } from './dto/user.response.dto';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
-  /***********************************************************************************************************************/
-  async deleteUserByID(userID: string): Promise<string> {
-    try {
-      const user = await this.prismaService.user.findUnique({
-        where: { userID: userID.toString() },
-      });
 
-      if (!user)
-        throw new HttpException(
-          eUserMessage.USER_NOT_FOUND,
-          HttpStatus.NOT_FOUND,
-        );
-
-      await this.prismaService.user.delete({
-        where: { userID: userID.toString() },
-      });
-
-      return user.userID;
-    } catch (error) {
-      throw new HttpException(
-        eUserMessage.REQUEST_ERROR + error,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
-  /***********************************************************************************************************************/
-  async updateUserByID(
-    userID: string,
-    updateUserRequestDTO: UserUpdateRequestDTO,
-  ) {
-    try {
-      const user = await this.prismaService.user.findUnique({
-        where: { userID: userID.toString() },
-      });
-
-      if (!user)
-        throw new HttpException(
-          eUserMessage.USER_NOT_FOUND,
-          HttpStatus.NOT_FOUND,
-        );
-
-      await this.prismaService.user.update({
-        where: { userID: userID.toString() },
-        data: {
-          name: updateUserRequestDTO.name,
-          email: updateUserRequestDTO.email,
-        },
-      });
-      return user.userID;
-    } catch (error) {
-      throw new HttpException(
-        eUserMessage.REQUEST_ERROR + error,
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
-  /***********************************************************************************************************************/
-  async getAllUsers(): Promise<User[]> {
+  async getAllUsers(): Promise<UserResponseDTO[]> {
     try {
       const users = await this.prismaService.user.findMany({
         orderBy: { userID: 'asc' },
       });
-      return users;
+
+      return users.map((user) => new UserResponseDTO(user));
     } catch (error) {
-      throw new HttpException(
-        eUserMessage.REQUEST_ERROR + error,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async deleteUserByID(userID: string): Promise<UserResponseDTO> {
+    try {
+      const whereObject = { where: { userID } };
+      const user = await this.prismaService.user.findUnique(whereObject);
+
+      if (!user)
+        throw new HttpException(
+          MESSAGES_EN.error.userNotFound,
+          HttpStatus.NOT_FOUND,
+        );
+
+      await this.prismaService.user.delete(whereObject);
+
+      return new UserResponseDTO(user);
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async updateUserByID(
+    userID: string,
+    userRequestUpdateDTO: UserRequestUpdateDTO,
+  ) {
+    try {
+      const { name, email } = userRequestUpdateDTO;
+
+      const user = await this.prismaService.user.findUnique({
+        where: { userID },
+      });
+
+      if (!user)
+        throw new HttpException(
+          MESSAGES_EN.error.userNotFound,
+          HttpStatus.NOT_FOUND,
+        );
+
+      if (user.email === email || user.name === name) {
+        throw new HttpException(
+          MESSAGES_EN.error.repeatedData,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      await this.prismaService.user.update({
+        where: { userID },
+        data: {
+          name,
+          email,
+        },
+      });
+
+      return new UserResponseDTO({
+        userID,
+        name,
+        email,
+      });
+    } catch (error) {
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 }

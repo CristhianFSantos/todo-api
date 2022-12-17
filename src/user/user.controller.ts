@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   Put,
   Query,
   UseGuards,
@@ -14,16 +13,13 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@prisma/client';
 import { JwtGuard } from 'src/auth/guards/jwt.guard';
+import { MESSAGES_EN } from 'src/messages/messages-en';
 
-import {
-  eUserControllerDescription,
-  eUserMessage,
-} from 'src/shared/messages.enum';
 import { BEARER_AUTH_NAME } from 'src/swagger/swagger.config';
-import { UserResponseRequestDTO } from './dto/user.response.dto';
-import { UserUpdateRequestDTO } from './dto/user.update.dto';
+import { UserResponseDTO } from './dto/user.response.dto';
+
+import { UserRequestUpdateDTO } from './dto/user.request.update.dto';
 import { UserService } from './user.service';
 
 @ApiTags('User')
@@ -32,49 +28,35 @@ import { UserService } from './user.service';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  @Get('get-all-users')
+  @ApiOperation({
+    summary: MESSAGES_EN.info.user_get_all_description,
+  })
+  async getAllUsers(): Promise<UserResponseDTO[]> {
+    return await this.userService.getAllUsers();
+  }
+
   @Delete('delete-user-by-id')
   @ApiQuery({ name: 'userID', required: true })
   @ApiOperation({
-    summary: eUserControllerDescription.USER_DELETED,
+    summary: MESSAGES_EN.info.user_deleted_description,
   })
   async deleteUserByID(
     @Query('userID') userID: string,
-  ): Promise<UserResponseRequestDTO> {
-    const userIdDeleted = await this.userService.deleteUserByID(userID);
-
-    const response = new UserResponseRequestDTO();
-    response.userID = userIdDeleted;
-    response.message = eUserMessage.USER_DELETE_SUCCESS;
-    response.httpStatus = HttpStatus.OK;
-    return response;
+  ): Promise<UserResponseDTO> {
+    return await this.userService.deleteUserByID(userID);
   }
-  /***********************************************************************************************************************/
+
   @Put('update-user-by-id')
   @ApiQuery({ name: 'userID', required: true })
   @ApiOperation({
-    summary: eUserControllerDescription.USER_UPDATED,
+    summary: MESSAGES_EN.info.user_updated_description,
   })
   async updateUserByID(
     @Query('userID') userID: string,
-    @Body() userUpdateRequestDTO: UserUpdateRequestDTO,
-  ): Promise<UserResponseRequestDTO> {
-    const userIdUpdated = await this.userService.updateUserByID(
-      userID,
-      userUpdateRequestDTO,
-    );
-
-    const response = new UserResponseRequestDTO();
-    response.userID = userIdUpdated;
-    response.message = eUserMessage.USER_UPDATE_SUCCESS;
-    response.httpStatus = HttpStatus.OK;
-    return response;
-  }
-  /***********************************************************************************************************************/
-  @Get('get-all-users')
-  @ApiOperation({
-    summary: eUserControllerDescription.USER_GET_ALL,
-  })
-  async getAllUsers(): Promise<User[]> {
-    return await this.userService.getAllUsers();
+    @Body() userUpdateRequestDTO: UserRequestUpdateDTO,
+  ): Promise<UserResponseDTO> {
+    return await this.userService.updateUserByID(userID, userUpdateRequestDTO);
   }
 }
