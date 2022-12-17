@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Todo } from '@prisma/client';
+import { randomUUID } from 'node:crypto';
 import { eTodoMessage } from 'src/shared/messages.enum';
 import { PrismaService } from './../prisma/prisma.service';
 import { TodoCreateRequestDTO } from './dtos/todo.create.dto';
@@ -10,10 +11,10 @@ export class TodoService {
   constructor(private readonly prismaService: PrismaService) {}
 
   /***********************************************************************************************************************/
-  async getTodosByIdUser(userID: number): Promise<Todo[]> {
+  async getTodosByIdUser(userID: string): Promise<Todo[]> {
     try {
       return await this.prismaService.todo.findMany({
-        where: { userID: parseInt(userID.toString()) },
+        where: { userID: userID.toString() },
         orderBy: { todoID: 'asc' },
       });
     } catch (error) {
@@ -24,11 +25,11 @@ export class TodoService {
     }
   }
   /***********************************************************************************************************************/
-  async getTodosByTitle(title: string, userID: number): Promise<Todo[]> {
+  async getTodosByTitle(title: string, userID: string): Promise<Todo[]> {
     try {
       const todos = await this.prismaService.todo.findMany({
         where: {
-          userID: parseInt(userID.toString()),
+          userID: userID.toString(),
           title: {
             contains: title,
             mode: 'insensitive',
@@ -45,10 +46,11 @@ export class TodoService {
     }
   }
   /***********************************************************************************************************************/
-  async postTodo(createTodoRequestDTO: TodoCreateRequestDTO): Promise<number> {
+  async postTodo(createTodoRequestDTO: TodoCreateRequestDTO): Promise<string> {
     try {
       const todo = await this.prismaService.todo.create({
         data: {
+          todoID: randomUUID(),
           title: createTodoRequestDTO.title,
           completed: createTodoRequestDTO.completed,
           description: createTodoRequestDTO.description,
@@ -70,10 +72,10 @@ export class TodoService {
     }
   }
   /***********************************************************************************************************************/
-  async deleteTodo(todoID: number): Promise<number> {
+  async deleteTodo(todoID: string): Promise<string> {
     try {
       const todo = await this.prismaService.todo.findUnique({
-        where: { todoID: parseInt(todoID.toString()) },
+        where: { todoID: todoID.toString() },
       });
 
       if (!todo)
@@ -83,7 +85,7 @@ export class TodoService {
         );
 
       await this.prismaService.todo.delete({
-        where: { todoID: parseInt(todoID.toString()) },
+        where: { todoID: todoID.toString() },
       });
 
       return todo.todoID;
@@ -96,12 +98,12 @@ export class TodoService {
   }
   /***********************************************************************************************************************/
   async updateTodo(
-    todoID: number,
+    todoID: string,
     updateRequestDTO: TodoUpdateRequestDTO,
-  ): Promise<number> {
+  ): Promise<string> {
     try {
       const todo = await this.prismaService.todo.findUnique({
-        where: { todoID: parseInt(todoID.toString()) },
+        where: { todoID: todoID.toString() },
       });
 
       if (!todo)
@@ -111,7 +113,7 @@ export class TodoService {
         );
 
       await this.prismaService.todo.update({
-        where: { todoID: parseInt(todoID.toString()) },
+        where: { todoID: todoID.toString() },
         data: {
           title: updateRequestDTO.title,
           completed: updateRequestDTO.completed,

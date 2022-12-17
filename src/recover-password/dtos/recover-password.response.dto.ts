@@ -1,7 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 
 export class RecoverPasswordRequestDTO {
-  userId: number;
+  userId: string;
   email: string;
   message: string;
   httpStatus: HttpStatus;

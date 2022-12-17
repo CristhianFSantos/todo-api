@@ -38,7 +38,7 @@ export class UserController {
     summary: eUserControllerDescription.USER_DELETED,
   })
   async deleteUserByID(
-    @Query('userID') userID: number,
+    @Query('userID') userID: string,
   ): Promise<UserResponseRequestDTO> {
     const userIdDeleted = await this.userService.deleteUserByID(userID);
 
@@ -55,7 +55,7 @@ export class UserController {
     summary: eUserControllerDescription.USER_UPDATED,
   })
   async updateUserByID(
-    @Query('userID') userID: number,
+    @Query('userID') userID: string,
     @Body() userUpdateRequestDTO: UserUpdateRequestDTO,
   ): Promise<UserResponseRequestDTO> {
     const userIdUpdated = await this.userService.updateUserByID(

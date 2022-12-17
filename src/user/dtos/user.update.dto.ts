@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class UserUpdateRequestDTO {
   @IsNotEmpty()
@@ -17,12 +17,4 @@ export class UserUpdateRequestDTO {
     default: 'felipe@todo.com',
   })
   email: string;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  @ApiProperty({
-    description: "User's admin",
-    default: false,
-  })
-  admin: boolean;
 }

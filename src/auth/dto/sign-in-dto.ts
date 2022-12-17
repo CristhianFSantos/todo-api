@@ -21,7 +21,7 @@ export class SignInRequestDTO {
 }
 
 export class SignInResponseDTO {
-  userID: number;
+  userID: string;
   email: string;
   name: string;
 }

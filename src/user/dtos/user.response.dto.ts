@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 export class UserResponseRequestDTO {
-  userID: number;
+  userID: string;
   message: string;
   httpStatus: HttpStatus;
 }

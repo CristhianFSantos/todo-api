@@ -5,9 +5,9 @@ import {
   eAuthMessage,
 } from 'src/shared/messages.enum';
 import { AuthService } from './auth.service';
-import { TodoResponseDTO } from './dtos/auth.response.dto';
-import { SignInRequestDTO } from './dtos/sign-in-dto';
-import { SignUpRequestDTO } from './dtos/sign-up-dto';
+import { TodoResponseDTO } from './dto/auth.response.dto';
+import { SignInRequestDTO } from './dto/sign-in-dto';
+import { SignUpRequestDTO } from './dto/sign-up-dto';
 
 @ApiTags('Auth')
 @Controller('auth')

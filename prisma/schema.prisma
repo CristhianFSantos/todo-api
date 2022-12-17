@@ -11,21 +11,20 @@ datasource db {
 }
 
 model Todo {
-  todoID      Int      @id @default(autoincrement())
+  todoID      String   @id
   title       String
   completed   Boolean
   description String
   createdAt   DateTime @default(now())
-  userID      Int
+  userID      String
   user        User     @relation(fields: [userID], references: [userID])
 }
 
 model User {
-  userID       Int     @id @default(autoincrement())
+  userID       String @id
   name         String
-  email        String  @unique
-  admin        Boolean
-  recoveryCode Int?    @default(0)
+  email        String @unique
+  recoveryCode Int?   @default(0)
   password     String
   todo         Todo[]
 }

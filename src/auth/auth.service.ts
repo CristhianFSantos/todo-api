@@ -1,10 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
+import { randomUUID } from 'node:crypto';
 import { eAuthMessage } from 'src/shared/messages.enum';
 import { PrismaService } from './../prisma/prisma.service';
-import { SignInRequestDTO, SignInResponseDTO } from './dtos/sign-in-dto';
-import { SignUpRequestDTO } from './dtos/sign-up-dto';
+import { SignInRequestDTO, SignInResponseDTO } from './dto/sign-in-dto';
+import { SignUpRequestDTO } from './dto/sign-up-dto';
 
 @Injectable()
 export class AuthService {
@@ -13,15 +14,15 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
   /***********************************************************************************************************************/
-  async signUp(signUpRequestDTO: SignUpRequestDTO): Promise<number> {
+  async signUp(signUpRequestDTO: SignUpRequestDTO): Promise<string> {
     try {
       const passwordHash = await argon.hash(signUpRequestDTO.password);
 
       const user = await this.prismaService.user.create({
         data: {
+          userID: randomUUID(),
           name: signUpRequestDTO.name,
           email: signUpRequestDTO.email,
-          admin: signUpRequestDTO.admin,
           password: passwordHash,
         },
       });
@@ -57,7 +58,7 @@ export class AuthService {
         HttpStatus.UNAUTHORIZED,
       );
 
-    const access_token = await this.signToken({
+    const access_token = this.signToken({
       userID: user.userID,
       name: user.name,
       email: user.email,

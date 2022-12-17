@@ -8,10 +8,10 @@ import { UserUpdateRequestDTO } from './dtos/user.update.dto';
 export class UserService {
   constructor(private readonly prismaService: PrismaService) {}
   /***********************************************************************************************************************/
-  async deleteUserByID(userID: number): Promise<number> {
+  async deleteUserByID(userID: string): Promise<string> {
     try {
       const user = await this.prismaService.user.findUnique({
-        where: { userID: parseInt(userID.toString()) },
+        where: { userID: userID.toString() },
       });
 
       if (!user)
@@ -21,7 +21,7 @@ export class UserService {
         );
 
       await this.prismaService.user.delete({
-        where: { userID: parseInt(userID.toString()) },
+        where: { userID: userID.toString() },
       });
 
       return user.userID;
@@ -34,12 +34,12 @@ export class UserService {
   }
   /***********************************************************************************************************************/
   async updateUserByID(
-    userID: number,
+    userID: string,
     updateUserRequestDTO: UserUpdateRequestDTO,
   ) {
     try {
       const user = await this.prismaService.user.findUnique({
-        where: { userID: parseInt(userID.toString()) },
+        where: { userID: userID.toString() },
       });
 
       if (!user)
@@ -49,11 +49,10 @@ export class UserService {
         );
 
       await this.prismaService.user.update({
-        where: { userID: parseInt(userID.toString()) },
+        where: { userID: userID.toString() },
         data: {
           name: updateUserRequestDTO.name,
           email: updateUserRequestDTO.email,
-          admin: updateUserRequestDTO.admin,
         },
       });
       return user.userID;

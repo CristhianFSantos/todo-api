@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsString } from 'class-validator';
 
 export class TodoUpdateRequestDTO {
   @IsNotEmpty()
@@ -35,10 +35,9 @@ export class TodoUpdateRequestDTO {
   createdAt: string;
 
   @IsNotEmpty()
-  @IsNumber()
   @ApiProperty({
     description: "User's id",
     default: 2,
   })
-  userID: number;
+  userID: string;
 }

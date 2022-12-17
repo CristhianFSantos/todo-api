@@ -39,7 +39,7 @@ export class TodoController {
   @ApiOperation({
     summary: eTodoControllerDescription.TODO_GET_BY_ID_USER,
   })
-  async getTodosByIdUser(@Query('userID') userID: number) {
+  async getTodosByIdUser(@Query('userID') userID: string) {
     const todos = await this.todoService.getTodosByIdUser(userID);
     return todos;
   }
@@ -51,7 +51,7 @@ export class TodoController {
     summary: eTodoControllerDescription.TODO_GET_BY_TITLE,
   })
   async getTodosByTitle(
-    @Query('userID') userID: number,
+    @Query('userID') userID: string,
     @Query('title') title: string,
   ) {
     const todos = await this.todoService.getTodosByTitle(title, userID);
@@ -77,7 +77,7 @@ export class TodoController {
   @ApiOperation({
     summary: eTodoControllerDescription.TODO_DELETE_BY_ID,
   })
-  async deleteTodo(@Query('todoID') todoID: number) {
+  async deleteTodo(@Query('todoID') todoID: string) {
     const todoIdDeleted = await this.todoService.deleteTodo(todoID);
 
     const response = new TodoResponseDTO();
@@ -93,7 +93,7 @@ export class TodoController {
     summary: eTodoControllerDescription.TODO_UPDATE_BY_ID,
   })
   async updateTodo(
-    @Query('todoID') todoID: number,
+    @Query('todoID') todoID: string,
     @Body() updateRequestDTO: TodoUpdateRequestDTO,
   ) {
     const todoIdUpdated = await this.todoService.updateTodo(
