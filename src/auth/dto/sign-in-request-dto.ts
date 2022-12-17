@@ -1,27 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { SCHEMAS_TEXT } from 'src/swagger/swagger.schemas.text';
 
 export class SignInRequestDTO {
   @IsNotEmpty()
   @IsEmail()
   @ApiProperty({
-    description: "User's email",
-    default: 'cristhian@todo.com',
+    description: SCHEMAS_TEXT.sign_in.email.description,
+    default: SCHEMAS_TEXT.sign_in.email.default,
   })
   email: string;
 
   @IsNotEmpty()
-  @MinLength(6)
+  @MinLength(8)
   @IsString()
   @ApiProperty({
-    description: "User's password",
-    default: '12345678',
+    description: SCHEMAS_TEXT.sign_in.password.description,
+    default: SCHEMAS_TEXT.sign_in.password.default,
   })
   password: string;
-}
-
-export class SignInResponseDTO {
-  userID: string;
-  email: string;
-  name: string;
 }

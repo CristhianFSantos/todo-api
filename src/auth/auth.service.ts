@@ -2,10 +2,12 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
 import { randomUUID } from 'node:crypto';
-import { eAuthMessage } from 'src/shared/messages.enum';
+import { MESSAGES_EN } from 'src/messages/messages-en';
 import { PrismaService } from './../prisma/prisma.service';
-import { SignInRequestDTO, SignInResponseDTO } from './dto/sign-in-dto';
-import { SignUpRequestDTO } from './dto/sign-up-dto';
+import { SignInRequestDTO } from './dto/sign-in-request-dto';
+import { SignInResponseDTO } from './dto/sign-in-response-dto';
+import { SignUpRequestDTO } from './dto/sign-up-request-dto';
+import { SignUpResponseDTO } from './dto/sign-up-response-dto';
 
 @Injectable()
 export class AuthService {
@@ -13,69 +15,78 @@ export class AuthService {
     private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService,
   ) {}
-  /***********************************************************************************************************************/
-  async signUp(signUpRequestDTO: SignUpRequestDTO): Promise<string> {
+
+  async signUp(signUpRequestDTO: SignUpRequestDTO): Promise<SignUpResponseDTO> {
     try {
-      const passwordHash = await argon.hash(signUpRequestDTO.password);
+      const { name, email } = signUpRequestDTO;
+      const password = await argon.hash(signUpRequestDTO.password);
+      const userID = randomUUID();
 
       const user = await this.prismaService.user.create({
         data: {
-          userID: randomUUID(),
-          name: signUpRequestDTO.name,
-          email: signUpRequestDTO.email,
-          password: passwordHash,
+          userID,
+          name,
+          email,
+          password,
         },
       });
 
-      return user.userID;
+      return new SignUpResponseDTO(user);
     } catch (error) {
+      const codePrismaUniqueConstraint = 'P2002';
       throw new HttpException(
-        `${eAuthMessage.EMAIL_ALREADY_EXISTS} or ${error}`,
+        error.code === codePrismaUniqueConstraint
+          ? MESSAGES_EN.error.emailAlreadyExists
+          : error,
         HttpStatus.BAD_REQUEST,
       );
     }
   }
-  /***********************************************************************************************************************/
-  async signIn(signInRequestDTO: SignInRequestDTO) {
+
+  async signIn(signInRequestDTO: SignInRequestDTO): Promise<SignInResponseDTO> {
+    const { email, password } = signInRequestDTO;
+
     const user = await this.prismaService.user.findUnique({
-      where: { email: signInRequestDTO.email },
+      where: { email },
     });
 
     if (!user)
       throw new HttpException(
-        eAuthMessage.INVALID_CREDENTIALS,
+        MESSAGES_EN.error.invalidCredentials,
         HttpStatus.UNAUTHORIZED,
       );
 
-    const passwordMatches = await argon.verify(
-      user.password,
-      signInRequestDTO.password,
-    );
+    const passwordMatches = await argon.verify(user.password, password);
 
     if (!passwordMatches)
       throw new HttpException(
-        eAuthMessage.INVALID_CREDENTIALS,
+        MESSAGES_EN.error.invalidCredentials,
         HttpStatus.UNAUTHORIZED,
       );
 
-    const access_token = this.signToken({
+    const signInResponse = new SignInResponseDTO({
       userID: user.userID,
       name: user.name,
       email: user.email,
     });
 
-    return {
-      email: user.email,
-      userName: user.name,
-      userID: user.userID,
-      access_token,
-    };
+    signInResponse.token = this.buildToken(signInResponse);
+
+    const sevenDaysInMilliseconds = 604800000;
+    signInResponse.tokenExpiration = new Date(
+      Date.now() + sevenDaysInMilliseconds,
+    );
+
+    return signInResponse;
   }
-  /***********************************************************************************************************************/
-  private signToken(signInResponseDTO: SignInResponseDTO) {
-    return this.jwtService.sign(signInResponseDTO, {
-      expiresIn: '1d',
+
+  private buildToken(dataToken: SignInResponseDTO) {
+    delete dataToken.token;
+    const sevenDaysInSecods = 604800;
+    const config = {
+      expiresIn: sevenDaysInSecods,
       secret: process.env.JWT_SECRET,
-    });
+    };
+    return this.jwtService.sign({ ...dataToken }, config);
   }
 }

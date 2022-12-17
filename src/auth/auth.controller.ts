@@ -1,52 +1,34 @@
-import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
-import {
-  eAuthControllerDescription,
-  eAuthMessage,
-} from 'src/shared/messages.enum';
+import { MESSAGES_EN } from 'src/messages/messages-en';
 import { AuthService } from './auth.service';
-import { TodoResponseDTO } from './dto/auth.response.dto';
-import { SignInRequestDTO } from './dto/sign-in-dto';
-import { SignUpRequestDTO } from './dto/sign-up-dto';
+import { SignInRequestDTO } from './dto/sign-in-request-dto';
+import { SignInResponseDTO } from './dto/sign-in-response-dto';
+import { SignUpRequestDTO } from './dto/sign-up-request-dto';
+import { SignUpResponseDTO } from './dto/sign-up-response-dto';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  /***********************************************************************************************************************/
   @Post('sign-up')
   @ApiOperation({
-    summary: eAuthControllerDescription.SIGN_UP,
+    summary: MESSAGES_EN.info.sign_up_description,
   })
   async signUp(
     @Body() singUpRequestDTO: SignUpRequestDTO,
-  ): Promise<TodoResponseDTO> {
-    const userID = await this.authService.signUp(singUpRequestDTO);
-
-    const response = new TodoResponseDTO();
-    response.userID = userID;
-    response.userName = singUpRequestDTO.name;
-    response.message = eAuthMessage.SIGN_UP_SUCCESS;
-    response.httpStatus = HttpStatus.OK;
-    return response;
+  ): Promise<SignUpResponseDTO> {
+    return await this.authService.signUp(singUpRequestDTO);
   }
-  /***********************************************************************************************************************/
+
   @Post('sign-in')
   @ApiOperation({
-    summary: eAuthControllerDescription.SIGN_IN,
+    summary: MESSAGES_EN.info.sign_in_description,
   })
   async signIn(
     @Body() signInRequestDTO: SignInRequestDTO,
-  ): Promise<TodoResponseDTO> {
-    const userAuth = await this.authService.signIn(signInRequestDTO);
-
-    const response = new TodoResponseDTO();
-    response.userID = userAuth.userID;
-    response.userName = userAuth.userName;
-    response.message = eAuthMessage.SIGN_IN_SUCCESS;
-    response.httpStatus = HttpStatus.OK;
-    response.token = userAuth.access_token;
-    return response;
+  ): Promise<SignInResponseDTO> {
+    return await this.authService.signIn(signInRequestDTO);
   }
 }

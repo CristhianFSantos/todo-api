@@ -4,7 +4,7 @@ import { SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { MESSAGES_EN } from './messages/messages-en';
 
-import { SWAGGER_CONFIG, SWAGGER_NAME } from './swagger.config';
+import { SWAGGER_CONFIG, SWAGGER_NAME } from './swagger/swagger.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
