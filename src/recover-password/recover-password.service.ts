@@ -1,7 +1,7 @@
 import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as argon from 'argon2';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/database/prisma/prisma.service';
 import { eRecoverPasswordMessage } from 'src/shared/messages.enum';
 import { RecoverPasswordRequestDTO } from './dtos/recover-password.response.dto';
 

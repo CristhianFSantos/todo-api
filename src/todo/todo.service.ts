@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Todo } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import { eTodoMessage } from 'src/shared/messages.enum';
-import { PrismaService } from './../prisma/prisma.service';
+import { PrismaService } from '../database/prisma/prisma.service';
 import { TodoCreateRequestDTO } from './dtos/todo.create.dto';
 import { TodoUpdateRequestDTO } from './dtos/todo.update.dto';
 

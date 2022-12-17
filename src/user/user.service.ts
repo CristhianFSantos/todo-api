@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { PrismaService } from 'src/database/prisma/prisma.service';
 import { MESSAGES_EN } from 'src/messages/messages-en';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { UserRequestUpdateDTO } from './dto/user.request.update.dto';
 import { UserResponseDTO } from './dto/user.response.dto';
 

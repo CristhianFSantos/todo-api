@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
 import { randomUUID } from 'node:crypto';
 import { MESSAGES_EN } from 'src/messages/messages-en';
-import { PrismaService } from './../prisma/prisma.service';
+import { PrismaService } from '../database/prisma/prisma.service';
 import { SignInRequestDTO } from './dto/sign-in.request.dto';
 import { SignInResponseDTO } from './dto/sign-in.response.dto';
 import { SignUpRequestDTO } from './dto/sign-up.request.dto';
