@@ -1,79 +1,73 @@
-import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import * as argon from 'argon2';
 import { PrismaService } from 'src/database/prisma/prisma.service';
-import { eRecoverPasswordMessage } from 'src/shared/messages.enum';
-import { RecoverPasswordRequestDTO } from './dtos/recover-password.response.dto';
+import { EmailRecoverPasswordService } from 'src/job/email-recover-password/email-revocer-passaword.service';
+import { MESSAGES_EN } from 'src/messages/messages-en';
+import { RecoverPasswordRequestDTO } from './dto/recover-password.request.dto';
+import { RecoverPasswordResponseDTO } from './dto/recover-password.response.dto';
 
 @Injectable()
 export class RecoverPasswordService {
   constructor(
-    private mailerService: MailerService,
     private readonly prismaService: PrismaService,
+    private readonly emailRecoverPasswordService: EmailRecoverPasswordService,
   ) {}
 
-  async recoverPassword(recoveryEmail: string): Promise<void> {
-    const code = this.generateRandomCode();
+  async recoverPassword(email: string): Promise<string> {
+    try {
+      const code = this.generateRandomCode();
 
-    const mail: ISendMailOptions = {
-      to: recoveryEmail,
-      from: 'nestjs.mail.api@gmail.com',
-      subject: 'Email de recuperação de senha',
-      template: 'recover-password',
-      context: {
-        uri: 'https://www.instagram.com/dev.brasil/',
-        code: code,
-      },
-    };
+      await this.prismaService.user.update({
+        where: { email: email },
+        data: {
+          recoveryCode: code,
+        },
+      });
 
-    await this.prismaService.user.update({
-      where: { email: recoveryEmail },
-      data: {
-        recoveryCode: code,
-      },
-    });
+      await this.emailRecoverPasswordService.addQueueEmailRecoverPasswordJob({
+        email,
+        code: code.toString(),
+      });
 
-    await this.mailerService.sendMail(mail);
+      return MESSAGES_EN.success.email_sent_successfully;
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   private generateRandomCode(): number {
-    let randomCode = '';
-    for (let count = 0; count < 6; count++) {
-      randomCode += Math.floor(Math.random() * 10);
-    }
-    return Number.parseInt(randomCode);
+    return Number.parseInt(Math.random().toString().slice(2, 8));
   }
 
   async checkRecoveryCodeAndUpdatePassword(
-    recoveryCode: string,
-    email: string,
-    newPassword: string,
-  ): Promise<RecoverPasswordRequestDTO> {
-    const user = await this.prismaService.user.findUnique({
-      where: { email: email },
-    });
+    recoverData: RecoverPasswordRequestDTO,
+  ): Promise<RecoverPasswordResponseDTO> {
+    try {
+      const { email, code, newPassword } = recoverData;
 
-    if (user.recoveryCode != Number.parseInt(recoveryCode))
-      throw new HttpException(
-        eRecoverPasswordMessage.INCORRECT_CODE,
-        HttpStatus.BAD_REQUEST,
-      );
-    const passwordHash = await argon.hash(newPassword);
+      const user = await this.prismaService.user.findUnique({
+        where: { email: email },
+      });
 
-    await this.prismaService.user.update({
-      where: { email: email },
-      data: {
-        recoveryCode: 0,
-        password: passwordHash,
-      },
-    });
+      if (!user || user.recoveryCode != Number.parseInt(code))
+        throw new HttpException(
+          MESSAGES_EN.error.incorret_code,
+          HttpStatus.BAD_REQUEST,
+        );
 
-    const response = new RecoverPasswordRequestDTO();
-    response.userId = user.userID;
-    response.email = user.email;
-    response.message = eRecoverPasswordMessage.RECOVER_SUCCESS;
-    response.httpStatus = HttpStatus.OK;
+      const password = await argon.hash(newPassword);
 
-    return response;
+      await this.prismaService.user.update({
+        where: { email: email },
+        data: {
+          password,
+          recoveryCode: 0,
+        },
+      });
+
+      return new RecoverPasswordResponseDTO(user);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 }

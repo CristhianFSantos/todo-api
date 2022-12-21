@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as argon from 'argon2';
 import { randomUUID } from 'node:crypto';
+import { EmailRegistrationService } from 'src/job/email-registration/email-registration.service';
 import { MESSAGES_EN } from 'src/messages/messages-en';
 import { PrismaService } from '../database/prisma/prisma.service';
 import { SignInRequestDTO } from './dto/sign-in.request.dto';
@@ -14,6 +15,7 @@ export class AuthService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly sendEmailRegistrationService: EmailRegistrationService,
   ) {}
 
   async signUp(signUpRequestDTO: SignUpRequestDTO): Promise<SignUpResponseDTO> {
@@ -29,6 +31,11 @@ export class AuthService {
           email,
           password,
         },
+      });
+
+      this.sendEmailRegistrationService.addQueueEmailRegistrationJob({
+        name,
+        email,
       });
 
       return new SignUpResponseDTO(user);

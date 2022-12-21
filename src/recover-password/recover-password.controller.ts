@@ -1,12 +1,7 @@
-import {
-  Controller,
-  HttpException,
-  HttpStatus,
-  Post,
-  Query,
-} from '@nestjs/common';
-import { ApiQuery, ApiTags } from '@nestjs/swagger';
-import { eRecoverPasswordMessage } from 'src/shared/messages.enum';
+import { Controller, Post, Query } from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { MESSAGES_EN } from 'src/messages/messages-en';
+import { RecoverPasswordRequestDTO } from './dto/recover-password.request.dto';
 import { RecoverPasswordService } from './recover-password.service';
 
 @ApiTags('Recover Password')
@@ -15,16 +10,14 @@ export class RecoverPasswordController {
   constructor(private recoverPasswordService: RecoverPasswordService) {}
 
   @Post('send-email')
+  @ApiOperation({
+    summary: MESSAGES_EN.info.recover_password_description,
+  })
   @ApiQuery({ name: 'email', required: true })
   async recoverPassword(@Query('email') email: string) {
-    try {
-      await this.recoverPasswordService.recoverPassword(email);
-      return {
-        message: eRecoverPasswordMessage.EMAIL_SENT_SUCCESS,
-      };
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
+    return {
+      message: await this.recoverPasswordService.recoverPassword(email),
+    };
   }
 
   @Post('update-password')
@@ -36,17 +29,12 @@ export class RecoverPasswordController {
     @Query('code') code: string,
     @Query('new-password') newPassword: string,
   ) {
-    try {
-      const response =
-        await this.recoverPasswordService.checkRecoveryCodeAndUpdatePassword(
-          code,
-          email,
-          newPassword,
-        );
-
-      return response;
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
+    return await this.recoverPasswordService.checkRecoveryCodeAndUpdatePassword(
+      {
+        email,
+        code,
+        newPassword,
+      } as RecoverPasswordRequestDTO,
+    );
   }
 }

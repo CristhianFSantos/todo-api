@@ -76,6 +76,10 @@
         <strong>docker-compose up</strong>
         <span>"Sobe um container docker com as configurações contidas no arquivo docker-compose.yml (docker deve está sendo executado na maquina)"</span>
     </li>
+     <li>
+        <strong>docker run --name redis -p 6379:6379 -d -t redis:alpine</strong>
+        <span>"⚠️ Estudar comando, o mesmo inicia um banco redis no docker"</span>
+    </li>
 </ul>
 
 <h2 style="color:#9c27b0;">🔒 Argon2, JWT e Passport</h2>
@@ -146,3 +150,7 @@
 - "prestart:prod": "rimraf dist && npm run build",
 - "postinstall": "npx prisma generate && npm run build",
 - "prebuild": "rimraf dist && npx prisma migrate deploy",
+
+npm install --save @nestjs/bull bull
+npm install --save-dev @types/bull
+npm i dotenv

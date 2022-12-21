@@ -9,6 +9,7 @@ export const MESSAGES_EN = {
     userNotFound: 'User not found',
     repeatedData: 'The data is the same as the existing ones',
     tokenExpired: 'Token expired',
+    incorret_code: 'Code or email incorrect',
   },
   info: {
     sign_up_description: 'Method to register a new user',
@@ -16,5 +17,9 @@ export const MESSAGES_EN = {
     user_deleted_description: 'Method to delete user',
     user_get_all_description: 'Method to get all users',
     user_updated_description: 'Method to update user',
+    recover_password_description: 'Method to recover password',
+  },
+  success: {
+    email_sent_successfully: 'Email sent successfully',
   },
 };

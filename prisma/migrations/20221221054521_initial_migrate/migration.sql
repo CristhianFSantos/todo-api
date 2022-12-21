@@ -1,21 +1,20 @@
 -- CreateTable
 CREATE TABLE "Todo" (
-    "todoID" SERIAL NOT NULL,
+    "todoID" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "completed" BOOLEAN NOT NULL,
     "description" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "userID" INTEGER NOT NULL,
+    "userID" TEXT NOT NULL,
 
     CONSTRAINT "Todo_pkey" PRIMARY KEY ("todoID")
 );
 
 -- CreateTable
 CREATE TABLE "User" (
-    "userID" SERIAL NOT NULL,
+    "userID" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "admin" BOOLEAN NOT NULL,
     "recoveryCode" INTEGER DEFAULT 0,
     "password" TEXT NOT NULL,
 
