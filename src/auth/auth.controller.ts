@@ -14,7 +14,7 @@ export class AuthController {
 
   @Post('sign-up')
   @ApiOperation({
-    summary: MESSAGES_EN.info.sign_up_description,
+    summary: MESSAGES_EN.info.signUpDescription,
   })
   async signUp(
     @Body() singUpRequestDTO: SignUpRequestDTO,
@@ -24,7 +24,7 @@ export class AuthController {
 
   @Post('sign-in')
   @ApiOperation({
-    summary: MESSAGES_EN.info.sign_in_description,
+    summary: MESSAGES_EN.info.signInDescription,
   })
   async signIn(
     @Body() signInRequestDTO: SignInRequestDTO,

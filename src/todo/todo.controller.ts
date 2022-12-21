@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpStatus,
   Post,
   Put,
   Query,
@@ -15,16 +14,14 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-
-import {
-  eTodoControllerDescription,
-  eTodoMessage,
-} from 'src/shared/messages.enum';
+import { Todo } from '@prisma/client';
+import { MESSAGES_EN } from 'src/messages/messages-en';
 import { BEARER_AUTH_NAME } from 'src/swagger/swagger.config';
 import { JwtGuard } from './../auth/guards/jwt.guard';
-import { TodoCreateRequestDTO } from './dtos/todo.create.dto';
-import { TodoResponseDTO } from './dtos/todo.response.dto';
-import { TodoUpdateRequestDTO } from './dtos/todo.update.dto';
+import { TodoCreateRequestDTO } from './dto/todo.create.request.dto';
+import { TodoResponseDTO } from './dto/todo.response';
+import { TodoUpdateRequestDTO } from './dto/todo.update.request.dto';
+
 import { TodoService } from './todo.service';
 
 @ApiTags('Todo')
@@ -33,77 +30,57 @@ import { TodoService } from './todo.service';
 @UseGuards(JwtGuard)
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
-  /***********************************************************************************************************************/
+
   @Get('get-todos-by-id-user')
   @ApiQuery({ name: 'userID', required: true })
   @ApiOperation({
-    summary: eTodoControllerDescription.TODO_GET_BY_ID_USER,
+    summary: MESSAGES_EN.info.todoGetByIdDescription,
   })
   async getTodosByIdUser(@Query('userID') userID: string) {
-    const todos = await this.todoService.getTodosByIdUser(userID);
-    return todos;
+    return await this.todoService.getTodosByuserID(userID);
   }
-  /***********************************************************************************************************************/
+
   @Get('get-todos-by-title-per-user')
   @ApiQuery({ name: 'title', required: true })
   @ApiQuery({ name: 'userID', required: true })
   @ApiOperation({
-    summary: eTodoControllerDescription.TODO_GET_BY_TITLE,
+    summary: MESSAGES_EN.info.todoGetByTitleDescription,
   })
   async getTodosByTitle(
     @Query('userID') userID: string,
     @Query('title') title: string,
   ) {
-    const todos = await this.todoService.getTodosByTitle(title, userID);
-    return todos;
+    return await this.todoService.getTodosByTitle(title, userID);
   }
-  /***********************************************************************************************************************/
+
   @Post('create-todo')
   @ApiOperation({
-    summary: eTodoControllerDescription.TODO_CREATE,
+    summary: MESSAGES_EN.info.todoCreateDescription,
   })
-  async postTodo(@Body() todoCreateRequestDTO: TodoCreateRequestDTO) {
-    const todoID = await this.todoService.postTodo(todoCreateRequestDTO);
-
-    const response = new TodoResponseDTO();
-    response.todoID = todoID;
-    response.message = eTodoMessage.TODO_CREATED_SUCCESS;
-    response.httpStatus = HttpStatus.CREATED;
-    return response;
+  async postTodo(
+    @Body() todoCreateRequestDTO: TodoCreateRequestDTO,
+  ): Promise<Todo> {
+    return await this.todoService.postTodo(todoCreateRequestDTO);
   }
-  /***********************************************************************************************************************/
+
   @Delete('delete-todo')
   @ApiQuery({ name: 'todoID', required: true })
   @ApiOperation({
-    summary: eTodoControllerDescription.TODO_DELETE_BY_ID,
+    summary: MESSAGES_EN.info.todoDeleteDescription,
   })
-  async deleteTodo(@Query('todoID') todoID: string) {
-    const todoIdDeleted = await this.todoService.deleteTodo(todoID);
-
-    const response = new TodoResponseDTO();
-    response.todoID = todoIdDeleted;
-    response.message = eTodoMessage.TODO_DELETED_SUCCESS;
-    response.httpStatus = HttpStatus.OK;
-    return response;
+  async deleteTodo(@Query('todoID') todoID: string): Promise<Todo> {
+    return await this.todoService.deleteTodo(todoID);
   }
-  /***********************************************************************************************************************/
+
   @Put('update-todo')
   @ApiQuery({ name: 'todoID', required: true })
   @ApiOperation({
-    summary: eTodoControllerDescription.TODO_UPDATE_BY_ID,
+    summary: MESSAGES_EN.info.todoUpdateDescription,
   })
   async updateTodo(
     @Query('todoID') todoID: string,
-    @Body() updateRequestDTO: TodoUpdateRequestDTO,
-  ) {
-    const todoIdUpdated = await this.todoService.updateTodo(
-      todoID,
-      updateRequestDTO,
-    );
-    const response = new TodoResponseDTO();
-    response.todoID = todoIdUpdated;
-    response.message = eTodoMessage.TODO_UPDATED_SUCCESS;
-    response.httpStatus = HttpStatus.OK;
-    return response;
+    @Body() todoUpdateRequestDTO: TodoUpdateRequestDTO,
+  ): Promise<TodoResponseDTO> {
+    return await this.todoService.updateTodo(todoID, todoUpdateRequestDTO);
   }
 }

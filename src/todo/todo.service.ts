@@ -1,138 +1,134 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Todo } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
-import { eTodoMessage } from 'src/shared/messages.enum';
+import { MESSAGES_EN } from 'src/messages/messages-en';
 import { PrismaService } from '../database/prisma/prisma.service';
-import { TodoCreateRequestDTO } from './dtos/todo.create.dto';
-import { TodoUpdateRequestDTO } from './dtos/todo.update.dto';
+import { TodoCreateRequestDTO } from './dto/todo.create.request.dto';
+import { TodoResponseDTO } from './dto/todo.response';
+import { TodoUpdateRequestDTO } from './dto/todo.update.request.dto';
 
 @Injectable()
 export class TodoService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  /***********************************************************************************************************************/
-  async getTodosByIdUser(userID: string): Promise<Todo[]> {
+  async getTodosByuserID(userID: string): Promise<Todo[]> {
     try {
       return await this.prismaService.todo.findMany({
-        where: { userID: userID.toString() },
+        where: { userID },
         orderBy: { todoID: 'asc' },
       });
     } catch (error) {
-      throw new HttpException(
-        eTodoMessage.REQUEST_ERROR + error,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-  /***********************************************************************************************************************/
-  async getTodosByTitle(title: string, userID: string): Promise<Todo[]> {
+
+  async getTodosByTitle(searchText: string, userID: string): Promise<Todo[]> {
     try {
-      const todos = await this.prismaService.todo.findMany({
+      return await this.prismaService.todo.findMany({
         where: {
           userID: userID.toString(),
           title: {
-            contains: title,
+            contains: searchText,
             mode: 'insensitive',
           },
         },
       });
-
-      return todos;
     } catch (error) {
-      throw new HttpException(
-        eTodoMessage.REQUEST_ERROR + error,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-  /***********************************************************************************************************************/
-  async postTodo(createTodoRequestDTO: TodoCreateRequestDTO): Promise<string> {
+
+  async postTodo(todoCreateRequestDTO: TodoCreateRequestDTO): Promise<Todo> {
     try {
+      const { title, description, completed, createdAt, userID } =
+        todoCreateRequestDTO;
+
       const todo = await this.prismaService.todo.create({
         data: {
           todoID: randomUUID(),
-          title: createTodoRequestDTO.title,
-          completed: createTodoRequestDTO.completed,
-          description: createTodoRequestDTO.description,
-          createdAt: new Date(createTodoRequestDTO.createdAt),
+          title,
+          completed,
+          description,
+          createdAt: new Date(createdAt),
           user: {
             connect: {
-              userID: createTodoRequestDTO.userID,
+              userID,
             },
           },
         },
       });
 
-      return todo.todoID;
+      return todo;
     } catch (error) {
-      throw new HttpException(
-        eTodoMessage.REQUEST_ERROR + error,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-  /***********************************************************************************************************************/
-  async deleteTodo(todoID: string): Promise<string> {
+
+  async deleteTodo(todoID: string): Promise<Todo> {
     try {
       const todo = await this.prismaService.todo.findUnique({
-        where: { todoID: todoID.toString() },
+        where: { todoID },
       });
 
       if (!todo)
         throw new HttpException(
-          eTodoMessage.TODO_NOT_FOUND,
+          MESSAGES_EN.error.todoNotFound,
           HttpStatus.NOT_FOUND,
         );
 
       await this.prismaService.todo.delete({
-        where: { todoID: todoID.toString() },
+        where: { todoID },
       });
 
-      return todo.todoID;
+      return todo;
     } catch (error) {
-      throw new HttpException(
-        eTodoMessage.REQUEST_ERROR + error,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
-  /***********************************************************************************************************************/
+
   async updateTodo(
     todoID: string,
-    updateRequestDTO: TodoUpdateRequestDTO,
-  ): Promise<string> {
+    todoUpdateRequestDTO: TodoUpdateRequestDTO,
+  ): Promise<TodoResponseDTO> {
     try {
+      const { title, completed, createdAt, description, userID } =
+        todoUpdateRequestDTO;
+
       const todo = await this.prismaService.todo.findUnique({
-        where: { todoID: todoID.toString() },
+        where: { todoID },
       });
 
       if (!todo)
         throw new HttpException(
-          eTodoMessage.TODO_NOT_FOUND,
+          MESSAGES_EN.error.todoNotFound,
           HttpStatus.NOT_FOUND,
         );
 
       await this.prismaService.todo.update({
-        where: { todoID: todoID.toString() },
+        where: { todoID },
         data: {
-          title: updateRequestDTO.title,
-          completed: updateRequestDTO.completed,
-          description: updateRequestDTO.description,
-          createdAt: new Date(updateRequestDTO.createdAt),
+          title,
+          completed,
+          description,
+          createdAt: new Date(createdAt),
           user: {
             connect: {
-              userID: updateRequestDTO.userID,
+              userID,
             },
           },
         },
       });
 
-      return todo.todoID;
+      return new TodoResponseDTO({
+        todoID,
+        title,
+        completed,
+        description,
+        createdAt,
+        userID,
+      });
     } catch (error) {
-      throw new HttpException(
-        eTodoMessage.REQUEST_ERROR + error,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new HttpException(error, HttpStatus.BAD_REQUEST);
     }
   }
 }

@@ -11,7 +11,7 @@ export class RecoverPasswordController {
 
   @Post('send-email')
   @ApiOperation({
-    summary: MESSAGES_EN.info.recover_password_description,
+    summary: MESSAGES_EN.info.recoverPasswordDescription,
   })
   @ApiQuery({ name: 'email', required: true })
   async recoverPassword(@Query('email') email: string) {

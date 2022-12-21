@@ -33,4 +33,48 @@ export const SCHEMAS_TEXT = {
       default: 'bill@outlook.com',
     },
   },
+  todo_create_request: {
+    title: {
+      description: "Todo's title",
+      default: 'Learn NestJS',
+    },
+    completed: {
+      description: "Todo's completed",
+      default: true,
+    },
+    description: {
+      description: "Todo's description",
+      default: 'Create application with NestJS, Prisma, Postgres and Docker',
+    },
+    createdAt: {
+      description: "Todo's createdAt",
+      default: '2020-06-01T00:00:00',
+    },
+    userID: {
+      description: "User's id",
+      default: '0f8fad5b-d9cb-469f-a165-70867728950e',
+    },
+  },
+  todo_update_request: {
+    title: {
+      description: "Todo's title",
+      default: 'Learn Angular',
+    },
+    completed: {
+      description: "Todo's completed",
+      default: false,
+    },
+    description: {
+      description: "Todo's description",
+      default: 'Learn Angular with NestJS',
+    },
+    createdAt: {
+      description: "Todo's createdAt",
+      default: '2020-06-01T00:00:00',
+    },
+    userID: {
+      description: "User's id",
+      default: '0f8fad5b-d9cb-469f-a165-70867728950e',
+    },
+  },
 };

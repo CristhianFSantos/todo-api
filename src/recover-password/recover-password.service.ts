@@ -29,7 +29,7 @@ export class RecoverPasswordService {
         code: code.toString(),
       });
 
-      return MESSAGES_EN.success.email_sent_successfully;
+      return MESSAGES_EN.success.emailSentSuccessfully;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -51,7 +51,7 @@ export class RecoverPasswordService {
 
       if (!user || user.recoveryCode != Number.parseInt(code))
         throw new HttpException(
-          MESSAGES_EN.error.incorret_code,
+          MESSAGES_EN.error.incorretCode,
           HttpStatus.BAD_REQUEST,
         );
 

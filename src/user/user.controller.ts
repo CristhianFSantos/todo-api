@@ -31,7 +31,7 @@ export class UserController {
 
   @Get('get-all-users')
   @ApiOperation({
-    summary: MESSAGES_EN.info.user_get_all_description,
+    summary: MESSAGES_EN.info.userGetAllDescription,
   })
   async getAllUsers(): Promise<UserResponseDTO[]> {
     return await this.userService.getAllUsers();
@@ -40,7 +40,7 @@ export class UserController {
   @Delete('delete-user-by-id')
   @ApiQuery({ name: 'userID', required: true })
   @ApiOperation({
-    summary: MESSAGES_EN.info.user_deleted_description,
+    summary: MESSAGES_EN.info.userDeletedDescription,
   })
   async deleteUserByID(
     @Query('userID') userID: string,
@@ -51,7 +51,7 @@ export class UserController {
   @Put('update-user-by-id')
   @ApiQuery({ name: 'userID', required: true })
   @ApiOperation({
-    summary: MESSAGES_EN.info.user_updated_description,
+    summary: MESSAGES_EN.info.userUpdatedDescription,
   })
   async updateUserByID(
     @Query('userID') userID: string,
