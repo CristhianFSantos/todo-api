@@ -11,7 +11,7 @@ import { TodoUpdateRequestDTO } from './dto/todo.update.request.dto';
 export class TodoService {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async getTodosByuserID(userID: string): Promise<Todo[]> {
+  async getTodoByUserID(userID: string): Promise<Todo[]> {
     try {
       return await this.prismaService.todo.findMany({
         where: { userID },

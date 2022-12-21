@@ -7,6 +7,7 @@ import {
 } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
+import { MESSAGES_EN } from 'src/messages/messages-en';
 import { eJob, eQueue } from '../job.config';
 import { IEmailRegistration } from './email-registration.model';
 
@@ -23,8 +24,8 @@ export class EmailRegistrationHandle {
   private async sendEmail(dataUser: IEmailRegistration): Promise<void> {
     await this.mailerService.sendMail({
       to: dataUser.email,
-      from: '🚀 Todo App 🚀 <nestjs.mail.api@gmail.com>',
-      subject: `Cadastro realizado com sucesso! Seja bem vindo ${dataUser.name}!`,
+      from: MESSAGES_EN.email.from,
+      subject: MESSAGES_EN.email.subject.emailRegistration(dataUser.name),
       template: 'email-registration',
       context: {
         uri: 'https://www.instagram.com/dev.brasil/',

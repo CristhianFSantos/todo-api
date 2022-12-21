@@ -7,6 +7,7 @@ import {
 } from '@nestjs/bull';
 import { Logger } from '@nestjs/common';
 import { Job } from 'bull';
+import { MESSAGES_EN } from 'src/messages/messages-en';
 import { eJob, eQueue } from '../job.config';
 import { IEmailRecoverPassword } from './email-revocer-passaword.model';
 
@@ -24,8 +25,8 @@ export class EmailRecoverPasswordHandle {
     const { email, code } = dataUser;
     await this.mailerService.sendMail({
       to: email,
-      from: '🚀 Todo App 🚀 <nestjs.mail.api@gmail.com>',
-      subject: `Você solicitou uma recuperação de senha!`,
+      from: MESSAGES_EN.email.from,
+      subject: MESSAGES_EN.email.subject.recoverPassword,
       template: 'recover-password',
       context: {
         uri: 'https://www.instagram.com/dev.brasil/',

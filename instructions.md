@@ -154,3 +154,5 @@
 npm install --save @nestjs/bull bull
 npm install --save-dev @types/bull
 npm i dotenv
+npm install --save @nestjs/schedule
+npm install --save-dev @types/cron

@@ -3,6 +3,15 @@ export const MESSAGES_EN = {
     local: (port) =>
       `🚀 Application is running in: http://localhost:${port}/swagger/`,
   },
+  email: {
+    from: '🚀 Todo App 🚀 <nestjs.mail.api@gmail.com>',
+    subject: {
+      recoverPassword: 'Você solicitou uma recuperação de senha! 🔒',
+      emailRegistration: (name) =>
+        `Cadastro realizado com sucesso! Seja bem vindo ${name}! 🚀`,
+      checkCompleteTodo: 'Você tem tarefas pendentes! 🔔',
+    },
+  },
   error: {
     emailAlreadyExists: 'Email already exists',
     invalidCredentials: 'User or password invalid',

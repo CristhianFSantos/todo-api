@@ -37,7 +37,7 @@ export class TodoController {
     summary: MESSAGES_EN.info.todoGetByIdDescription,
   })
   async getTodosByIdUser(@Query('userID') userID: string) {
-    return await this.todoService.getTodosByuserID(userID);
+    return await this.todoService.getTodoByUserID(userID);
   }
 
   @Get('get-todos-by-title-per-user')
